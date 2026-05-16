@@ -85,3 +85,10 @@ Phase 0 scaffolding is implemented:
 - baseline pytest coverage
 - Ruff and mypy configuration
 - starter project documentation and conventions
+
+Phase 1 core schemas are implemented:
+
+- Planner task and task-list models
+- Architecture, code-change, test-result, static-analysis, review, and agent-state models
+- Validation tests for schema behavior
+- [Agent state documentation](docs/agent-state.md)
