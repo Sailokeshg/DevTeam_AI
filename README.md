@@ -46,6 +46,12 @@ source .venv/bin/activate
 pip install -e "backend[dev]"
 ```
 
+To include the Streamlit dashboard dependencies:
+
+```bash
+pip install -e "backend[dev,ui]"
+```
+
 ### 3. Run the backend API
 
 ```bash
@@ -91,6 +97,27 @@ curl http://127.0.0.1:8000/runs/<run_id>/logs
 
 Run history is stored in `.devteam-ai/runs.sqlite3` by default. Set
 `DEVTEAM_AI_RUN_DB=/path/to/runs.sqlite3` to use a different SQLite database.
+
+## Streamlit Dashboard (Phase 11)
+
+Run the FastAPI backend in one terminal:
+
+```bash
+cd backend
+uvicorn app.main:app --reload
+```
+
+Run the dashboard in a second terminal:
+
+```bash
+streamlit run ui/streamlit_app.py
+```
+
+The dashboard defaults to `http://127.0.0.1:8000`. Set
+`DEVTEAM_AI_API_URL=http://host:port` or use the sidebar input to target a different backend.
+It can start a new synchronous run or load an existing run id, then display the agent timeline,
+planner tasks, architecture plan, code diff, pytest results, static-analysis results, reviewer
+feedback, and final summary.
 
 ## Ollama Setup (Phase 2)
 
@@ -228,3 +255,11 @@ Phase 10 FastAPI run-management endpoints are implemented:
 - `GET /runs/{run_id}/diff` returns the final captured diff
 - `GET /runs/{run_id}/logs` returns derived agent and quality-gate logs
 - SQLite run history with dependency-injected tests that do not require Ollama
+
+Phase 11 Streamlit dashboard is implemented:
+
+- UI inputs for local repo path, feature request, max iterations, backend URL, and existing run id
+- Run status, final summary, and agent timeline
+- Planner task list and Architect design sections
+- Diff viewer, pytest results, static-analysis results, and Reviewer feedback
+- Clear local demo instructions for running backend and UI together
