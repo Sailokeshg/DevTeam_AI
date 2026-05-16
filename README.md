@@ -65,6 +65,33 @@ Expected response:
 {"status": "ok"}
 ```
 
+## Run API (Phase 10)
+
+Phase 10 adds synchronous run-management endpoints backed by local SQLite storage.
+
+Start a workflow run:
+
+```bash
+curl -X POST http://127.0.0.1:8000/runs \
+  -H "Content-Type: application/json" \
+  -d '{
+    "repository_path": "/absolute/path/to/local/repo",
+    "feature_request": "Add a /ping endpoint with tests",
+    "max_iterations": 3
+  }'
+```
+
+Inspect saved run data:
+
+```bash
+curl http://127.0.0.1:8000/runs/<run_id>
+curl http://127.0.0.1:8000/runs/<run_id>/diff
+curl http://127.0.0.1:8000/runs/<run_id>/logs
+```
+
+Run history is stored in `.devteam-ai/runs.sqlite3` by default. Set
+`DEVTEAM_AI_RUN_DB=/path/to/runs.sqlite3` to use a different SQLite database.
+
 ## Ollama Setup (Phase 2)
 
 DevTeam AI uses Ollama as the default local/free LLM provider.
@@ -193,3 +220,11 @@ Phase 9 LangGraph workflow orchestration is implemented:
 - Conditional routing for approval, coder repair, tester repair, rerun checks, and max-iteration finalization
 - `run_devteam_workflow` service function for local repo feature requests
 - Tests with mocked node functions covering expected sequence and routing behavior
+
+Phase 10 FastAPI run-management endpoints are implemented:
+
+- `POST /runs` starts a synchronous local workflow run
+- `GET /runs/{run_id}` returns persisted run state
+- `GET /runs/{run_id}/diff` returns the final captured diff
+- `GET /runs/{run_id}/logs` returns derived agent and quality-gate logs
+- SQLite run history with dependency-injected tests that do not require Ollama

@@ -28,3 +28,6 @@ dist/
 
 # Logs
 *.log
+
+# Local DevTeam AI runtime data
+.devteam-ai/
