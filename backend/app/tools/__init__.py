@@ -1,1 +1,51 @@
 """Tooling modules for repository and quality operations."""
+
+from app.tools.file_tools import (
+    FileEntry,
+    FileReadResult,
+    FileToolError,
+    FileWriteResult,
+    PathTraversalError,
+    RepositorySummary,
+    SearchMatch,
+    list_files,
+    read_file,
+    resolve_repo_path,
+    search_code,
+    summarize_repository_tree,
+    write_file,
+)
+from app.tools.patch_tools import (
+    PatchApplyError,
+    PatchApplyResult,
+    PatchParseError,
+    PatchToolError,
+    apply_unified_diff,
+    get_diff,
+    parse_unified_diff,
+    validate_unified_diff,
+)
+
+__all__ = [
+    "FileEntry",
+    "FileReadResult",
+    "FileToolError",
+    "FileWriteResult",
+    "PathTraversalError",
+    "PatchApplyError",
+    "PatchApplyResult",
+    "PatchParseError",
+    "PatchToolError",
+    "RepositorySummary",
+    "SearchMatch",
+    "apply_unified_diff",
+    "get_diff",
+    "list_files",
+    "parse_unified_diff",
+    "read_file",
+    "resolve_repo_path",
+    "search_code",
+    "summarize_repository_tree",
+    "validate_unified_diff",
+    "write_file",
+]

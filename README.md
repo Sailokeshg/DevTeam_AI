@@ -143,3 +143,26 @@ Phase 3 Planner and Architect agents are implemented:
 - Architect Agent that validates LLM output into `ArchitecturePlan`
 - Shared JSON parsing and schema-validation error handling
 - Fake-provider tests that do not require a real LLM
+
+Phase 4 repository inspection and file tools are implemented:
+
+- Safe file listing, reading, and writing inside a selected repository
+- Path traversal prevention for repository file operations
+- Code search with line-level matches
+- Repository tree summaries that ignore generated and dependency directories
+- Tests for file safety and small Python repo summarization
+
+Phase 5 Coder Agent and patch tools are implemented:
+
+- Coder Agent that turns implementation context into a validated unified diff
+- Safe unified-diff parser and applicator for repository files
+- `get_diff` helper for displaying final git diffs
+- Tests for patch parsing, application, traversal rejection, and Coder Agent output validation
+
+Phase 4 repository inspection and file tools are implemented:
+
+- Safe path resolution that prevents access outside the selected repository
+- File listing, reading, writing, and code search helpers
+- Repository tree summaries with basic file-extension statistics
+- Common generated and dependency directories ignored during inspection
+- Tests for path safety, ignored folders, search, and summarization
