@@ -163,6 +163,34 @@ Sandbox limitations:
 - Network is disabled by default, so commands that need downloads should fail unless explicitly
   configured otherwise.
 
+## Git And GitHub Workflow (Phase 13)
+
+Phase 13 adds local Git workflow helpers for repository automation:
+
+- clone a public repository or local test mirror
+- create a branch
+- inspect diffs
+- commit selected or all changes
+- generate a PR title/body
+- optionally push a branch or create a GitHub PR only after explicit approval
+
+GitHub PR creation uses the GitHub CLI (`gh`) and a configured token. Tokens are read from
+environment variables and are never returned in tool results.
+
+Optional setup:
+
+```bash
+brew install gh
+export GITHUB_TOKEN="ghp_your_token_here"
+```
+
+Safety rules:
+
+- Push and PR creation require an explicit `approved=True` argument in code.
+- GitHub tokens are not passed to agents or included in generated summaries.
+- GitHub command errors redact configured token values before surfacing output.
+- Branch names, refs, paths, and clone URLs are validated before commands run.
+
 ## Ollama Setup (Phase 2)
 
 DevTeam AI uses Ollama as the default local/free LLM provider.
@@ -316,3 +344,11 @@ Phase 12 Docker sandbox execution is implemented:
 - Safe repository mount construction and command validation
 - Sandbox Dockerfile with pytest, Ruff, mypy, Bandit, and Semgrep Community Edition
 - Tests for allowed commands, blocked dangerous commands, Docker command construction, and runner results
+
+Phase 13 Git and GitHub integration is implemented:
+
+- Git helpers for public clone, branch creation, diff inspection, and commits
+- PR title/body generation from feature summaries and changed files
+- Optional branch push and GitHub PR creation gated by explicit approval flags
+- Token-safe GitHub CLI integration with redacted error output
+- Tests using temporary Git repositories and mocked GitHub CLI calls
