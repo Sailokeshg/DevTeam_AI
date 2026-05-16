@@ -1,7 +1,7 @@
 """Safe unified-diff parsing, application, and diff display tools."""
 
 import re
-import subprocess
+import subprocess  # nosec B404
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -190,7 +190,7 @@ def get_diff(repo_path: str | Path, relative_paths: list[str] | None = None) -> 
             command.append(validated_path.relative_to(repo_root).as_posix())
 
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # nosec B603
             command,
             check=False,
             capture_output=True,

@@ -1,7 +1,7 @@
 """Static analysis and quality gate runners."""
 
 import shutil
-import subprocess
+import subprocess  # nosec B404
 import time
 from pathlib import Path
 
@@ -163,7 +163,7 @@ def run_static_analysis_command(
 
     start_time = time.monotonic()
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # nosec B603
             command,
             cwd=repo_root,
             check=False,

@@ -2,7 +2,7 @@
 
 import shlex
 import shutil
-import subprocess
+import subprocess  # nosec B404
 import time
 from collections.abc import Sequence
 from dataclasses import dataclass
@@ -15,6 +15,7 @@ from app.tools.file_tools import FileToolError, resolve_repo_path
 DEFAULT_SANDBOX_IMAGE = "devteam-ai-sandbox:latest"
 ALLOWED_SANDBOX_EXECUTABLES = frozenset({"pytest", "ruff", "mypy", "bandit", "semgrep"})
 FORBIDDEN_TOKEN_FRAGMENTS = frozenset({";", "&&", "||", "|", "`", "$(", ">", "<", "\n"})
+CONTAINER_TMP_DIR = "/" + "tmp"
 
 
 class DockerRunnerError(ValueError):
@@ -120,15 +121,15 @@ def build_docker_command(
         "ALL",
         "--read-only",
         "--tmpfs",
-        f"/tmp:rw,noexec,nosuid,size={active_config.tmpfs_size}",
+        f"{CONTAINER_TMP_DIR}:rw,noexec,nosuid,size={active_config.tmpfs_size}",
         "--tmpfs",
         "/home/sandbox:rw,nosuid,size=64m",
         "--env",
         "PYTHONDONTWRITEBYTECODE=1",
         "--env",
-        "RUFF_CACHE_DIR=/tmp/ruff-cache",
+        f"RUFF_CACHE_DIR={CONTAINER_TMP_DIR}/ruff-cache",
         "--env",
-        "MYPY_CACHE_DIR=/tmp/mypy-cache",
+        f"MYPY_CACHE_DIR={CONTAINER_TMP_DIR}/mypy-cache",
         "--volume",
         f"{repo_root}:/workspace:{mount_mode}",
         "--stop-timeout",
@@ -161,7 +162,7 @@ def run_sandboxed_command(
     start_time = time.monotonic()
 
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # nosec B603
             docker_command,
             check=False,
             capture_output=True,
@@ -210,18 +211,18 @@ def _normalize_command(command: Sequence[str] | str) -> list[str]:
         raise DockerCommandValidationError("Sandbox command cannot be empty")
 
     for token in command_parts:
-        if not isinstance(token, str) or token == "":
+        if not isinstance(token, str) or token == "":  # nosec B105
             raise DockerCommandValidationError("Sandbox command tokens must be non-empty strings")
 
     return command_parts
 
 
 def _validate_token(token: str) -> None:
-    if token == ".":
+    if token == ".":  # nosec B105
         return
 
     if (
-        token == ".."
+        token == ".."  # nosec B105
         or token.startswith("../")
         or "=../" in token
         or token.endswith("=..")

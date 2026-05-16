@@ -1,11 +1,58 @@
-name: CI Placeholder
+name: CI
 
 on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
-  placeholder:
+  backend-quality:
+    name: Backend quality gates
     runs-on: ubuntu-latest
+
     steps:
-      - name: Placeholder
-        run: echo "CI workflow will be implemented in Phase 14"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: backend/pyproject.toml
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,ui]"
+
+      - name: Ruff lint backend
+        working-directory: backend
+        run: ruff check .
+
+      - name: Ruff lint Streamlit UI
+        working-directory: backend
+        run: ruff check ../ui --config pyproject.toml
+
+      - name: Ruff format check backend
+        working-directory: backend
+        run: ruff format --check .
+
+      - name: Ruff format check Streamlit UI
+        working-directory: backend
+        run: ruff format --check ../ui --config pyproject.toml
+
+      - name: mypy
+        working-directory: backend
+        run: mypy app
+
+      - name: pytest
+        working-directory: backend
+        run: pytest
+
+      - name: Bandit security scan
+        working-directory: backend
+        run: bandit -r app

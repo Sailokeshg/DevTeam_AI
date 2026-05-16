@@ -1,7 +1,7 @@
 """Pytest runner and result parsing tools."""
 
 import re
-import subprocess
+import subprocess  # nosec B404
 import sys
 import time
 from pathlib import Path
@@ -36,7 +36,7 @@ def run_pytest(
     start_time = time.monotonic()
 
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # nosec B603
             command,
             cwd=repo_root,
             check=False,

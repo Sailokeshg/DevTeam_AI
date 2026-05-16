@@ -5,7 +5,7 @@ from __future__ import annotations
 import os
 import re
 import shutil
-import subprocess
+import subprocess  # nosec B404
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -359,7 +359,7 @@ def _run_command(
     secret_values: Sequence[str] = (),
 ) -> GitCommandResult:
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # nosec B603
             list(command),
             cwd=cwd,
             env=dict(env) if env is not None else None,

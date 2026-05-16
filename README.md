@@ -1,65 +1,107 @@
 # DevTeam AI
 
-DevTeam AI is a multi-agent software development system that collaborates like a real software team. It accepts a feature request, analyzes a codebase, plans work, proposes architecture, generates code and tests, runs quality checks, and reviews results in an iterative loop.
+[![CI](https://github.com/Sailokeshg/DevTeam_AI/actions/workflows/ci.yml/badge.svg)](https://github.com/Sailokeshg/DevTeam_AI/actions/workflows/ci.yml)
+![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
+![FastAPI](https://img.shields.io/badge/backend-FastAPI-009688)
+![LangGraph](https://img.shields.io/badge/orchestration-LangGraph-2f604f)
+![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-## Architecture Summary
+DevTeam AI is a local-first multi-agent software development system that behaves like a small engineering team. It accepts a feature request, inspects a repository, creates an implementation plan, proposes architecture, generates patches and tests, runs quality gates, reviews the result, and iterates until the change is approved or the workflow reaches a maximum iteration count.
 
-The project is split into:
+This project is built to be resume-worthy: typed agent contracts, deterministic tests, CI quality gates, Docker sandboxing, a Streamlit dashboard, and safe Git/GitHub workflow helpers.
 
-- `backend/`: FastAPI service, agent logic, workflow orchestration, tools, schemas, and persistence.
-- `ui/`: Streamlit dashboard for running and observing agent workflows.
-- `prompts/`: Prompt templates for each agent role.
-- `examples/`: Demo repositories used for local evaluation.
-- `docs/`: Architecture notes, demo script, and resume-ready project points.
+## Highlights
 
-## Planned Phases
+- Planner, Architect, Coder, Tester, and Reviewer agents with typed Pydantic outputs.
+- LangGraph workflow orchestration with conditional repair routing.
+- Ollama as the default local/free LLM provider, with provider abstraction for future models.
+- Patch-based code changes instead of unrestricted shell execution by agents.
+- pytest, Ruff, mypy, Bandit, and optional Semgrep quality gates.
+- Docker sandbox runner with command allowlisting and CPU, memory, PID, filesystem, and network controls.
+- FastAPI run-management API with SQLite run history.
+- Streamlit dashboard for local demos.
+- Git helpers for clone, branch, diff, commit, PR title/body generation, and optional GitHub PR creation.
 
-0. Project scaffold and developer setup
-1. Core schemas and shared workflow state
-2. LLM provider abstraction with Ollama
-3. Prompt templates and Planner/Architect agents
-4. Repository inspection and file tools
-5. Coder agent with patch-based changes
-6. Tester agent and pytest runner
-7. Static analysis tools
-8. Reviewer agent and repair loop
-9. LangGraph workflow orchestration
-10. FastAPI endpoints for run management
-11. Streamlit dashboard
-12. Docker sandbox execution
-13. Git and GitHub integration
-14. CI/CD and portfolio polish
-15. Evaluation and example runs
+## Demo Preview
+
+![Dashboard screenshot placeholder](docs/assets/dashboard-placeholder.svg)
+
+![Demo GIF placeholder](docs/assets/demo-gif-placeholder.svg)
+
+## Architecture
+
+```mermaid
+flowchart TD
+    User["User feature request"] --> UI["Streamlit dashboard"]
+    User --> API["FastAPI API"]
+    UI --> API
+    API --> Store["SQLite run history"]
+    API --> Graph["LangGraph workflow"]
+
+    Graph --> Repo["Repository inspection"]
+    Repo --> Planner["Planner Agent"]
+    Planner --> Architect["Architect Agent"]
+    Architect --> Coder["Coder Agent"]
+    Coder --> Patch["Unified diff patch"]
+    Patch --> Tester["Tester Agent"]
+    Tester --> Gates["Quality gates"]
+
+    Gates --> Pytest["pytest"]
+    Gates --> Ruff["Ruff"]
+    Gates --> Mypy["mypy"]
+    Gates --> Bandit["Bandit"]
+    Gates --> Semgrep["Semgrep optional"]
+
+    Gates --> Reviewer["Reviewer Agent"]
+    Reviewer --> Decision{"Approved?"}
+    Decision -- yes --> Final["Final diff and summary"]
+    Decision -- tests fail --> Tester
+    Decision -- code/security fail --> Coder
+    Decision -- max iterations --> Failed["Failed status"]
+
+    Ollama["Ollama local LLM"] -. provider .-> Planner
+    Ollama -. provider .-> Architect
+    Ollama -. provider .-> Coder
+    Ollama -. provider .-> Tester
+    Ollama -. provider .-> Reviewer
+    Docker["Docker sandbox"] -. safer execution .-> Gates
+    Git["Git/GitHub tools"] -. branch, commit, PR-ready output .-> Final
+```
+
+More detail: [docs/architecture.md](docs/architecture.md)
+
+## Repository Structure
+
+```text
+devteam-ai/
+├── backend/                 # FastAPI app, agents, schemas, graph, tools, tests
+├── ui/                      # Streamlit dashboard
+├── prompts/                 # Agent prompt templates
+├── examples/                # Demo repositories
+├── docs/                    # Architecture, demo script, resume bullets
+├── .github/workflows/       # CI quality gates
+├── docker-compose.yml
+├── AGENTS.md
+├── README.md
+└── LICENSE
+```
 
 ## Local Setup
-
-### 1. Create and activate a virtual environment
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-```
-
-### 2. Install dependencies
-
-```bash
-pip install -e "backend[dev]"
-```
-
-To include the Streamlit dashboard dependencies:
-
-```bash
 pip install -e "backend[dev,ui]"
 ```
 
-### 3. Run the backend API
+Start the backend:
 
 ```bash
 cd backend
 uvicorn app.main:app --reload
 ```
 
-API health check:
+Health check:
 
 ```bash
 curl http://127.0.0.1:8000/health
@@ -71,139 +113,18 @@ Expected response:
 {"status": "ok"}
 ```
 
-## Run API (Phase 10)
-
-Phase 10 adds synchronous run-management endpoints backed by local SQLite storage.
-
-Start a workflow run:
-
-```bash
-curl -X POST http://127.0.0.1:8000/runs \
-  -H "Content-Type: application/json" \
-  -d '{
-    "repository_path": "/absolute/path/to/local/repo",
-    "feature_request": "Add a /ping endpoint with tests",
-    "max_iterations": 3
-  }'
-```
-
-Inspect saved run data:
-
-```bash
-curl http://127.0.0.1:8000/runs/<run_id>
-curl http://127.0.0.1:8000/runs/<run_id>/diff
-curl http://127.0.0.1:8000/runs/<run_id>/logs
-```
-
-Run history is stored in `.devteam-ai/runs.sqlite3` by default. Set
-`DEVTEAM_AI_RUN_DB=/path/to/runs.sqlite3` to use a different SQLite database.
-
-## Streamlit Dashboard (Phase 11)
-
-Run the FastAPI backend in one terminal:
-
-```bash
-cd backend
-uvicorn app.main:app --reload
-```
-
-Run the dashboard in a second terminal:
+Start the dashboard in another terminal:
 
 ```bash
 streamlit run ui/streamlit_app.py
 ```
 
-The dashboard defaults to `http://127.0.0.1:8000`. Set
-`DEVTEAM_AI_API_URL=http://host:port` or use the sidebar input to target a different backend.
-It can start a new synchronous run or load an existing run id, then display the agent timeline,
-planner tasks, architecture plan, code diff, pytest results, static-analysis results, reviewer
-feedback, and final summary.
-
-## Docker Sandbox (Phase 12)
-
-Phase 12 adds a constrained Docker runner for test and quality-gate commands. Build the
-sandbox image from the repository root:
-
-```bash
-docker build -f backend/Dockerfile.sandbox -t devteam-ai-sandbox:latest backend
-```
-
-The runner allows only these executables inside the sandbox:
-
-- `pytest`
-- `ruff`
-- `mypy`
-- `bandit`
-- `semgrep`
-
-Sandbox defaults:
-
-- mounts only the selected repository at `/workspace`
-- disables network access by default
-- applies memory, CPU, and PID limits
-- drops Linux capabilities and enables `no-new-privileges`
-- runs with a read-only container filesystem and temporary writable cache directories
-- rejects shell control operators, absolute paths, and path traversal outside `/workspace`
-
-Example internal use:
-
-```python
-from app.tools.docker_runner import run_sandboxed_command
-
-result = run_sandboxed_command("/absolute/path/to/repo", ["pytest", "-q"])
-print(result.success, result.output)
-```
-
-Sandbox limitations:
-
-- Docker must be installed and running locally.
-- The selected repository is mounted into the container; use `repository_read_only=True` for
-  read-only checks when possible.
-- This is a safer execution boundary, not a perfect security boundary for malicious code.
-- Network is disabled by default, so commands that need downloads should fail unless explicitly
-  configured otherwise.
-
-## Git And GitHub Workflow (Phase 13)
-
-Phase 13 adds local Git workflow helpers for repository automation:
-
-- clone a public repository or local test mirror
-- create a branch
-- inspect diffs
-- commit selected or all changes
-- generate a PR title/body
-- optionally push a branch or create a GitHub PR only after explicit approval
-
-GitHub PR creation uses the GitHub CLI (`gh`) and a configured token. Tokens are read from
-environment variables and are never returned in tool results.
-
-Optional setup:
-
-```bash
-brew install gh
-export GITHUB_TOKEN="ghp_your_token_here"
-```
-
-Safety rules:
-
-- Push and PR creation require an explicit `approved=True` argument in code.
-- GitHub tokens are not passed to agents or included in generated summaries.
-- GitHub command errors redact configured token values before surfacing output.
-- Branch names, refs, paths, and clone URLs are validated before commands run.
-
-## Ollama Setup (Phase 2)
+## Ollama Setup
 
 DevTeam AI uses Ollama as the default local/free LLM provider.
 
-Install Ollama from [ollama.com](https://ollama.com), then start the local server:
-
 ```bash
 ollama serve
-```
-
-Pull the default model:
-
-```bash
 ollama pull llama3.1
 ```
 
@@ -215,140 +136,126 @@ export OLLAMA_MODEL="llama3.1"
 export OLLAMA_TIMEOUT_SECONDS="30"
 ```
 
-Internal provider smoke test:
+Tests use fake providers and do not require Ollama.
+
+## Example Run
+
+Start a synchronous run through the API:
 
 ```bash
-cd backend
-python -c "from app.llm import generate_text; print(generate_text('Reply with ok.').text)"
+curl -X POST http://127.0.0.1:8000/runs \
+  -H "Content-Type: application/json" \
+  -d '{
+    "repository_path": "/absolute/path/to/local/repo",
+    "feature_request": "Add a /ping endpoint with tests",
+    "max_iterations": 3
+  }'
 ```
 
-Tests use a mock provider and do not require Ollama to be installed or running.
-
-## Quality Checks
-
-From the `backend/` directory:
+Inspect the run:
 
 ```bash
-cd backend
+curl http://127.0.0.1:8000/runs/<run_id>
+curl http://127.0.0.1:8000/runs/<run_id>/diff
+curl http://127.0.0.1:8000/runs/<run_id>/logs
+```
+
+The Streamlit dashboard can start the same run and display the agent timeline, task list, architecture plan, diff, tests, static-analysis results, reviewer feedback, and final status.
+
+## Docker Sandbox
+
+Build the sandbox image:
+
+```bash
+docker build -f backend/Dockerfile.sandbox -t devteam-ai-sandbox:latest backend
+```
+
+Allowed sandbox commands:
+
+- `pytest`
+- `ruff`
+- `mypy`
+- `bandit`
+- `semgrep`
+
+Sandbox defaults disable network access, mount only the selected repository at `/workspace`, use a read-only container filesystem, and apply timeout, memory, CPU, and PID limits.
+
+## Git And GitHub Workflow
+
+Phase 13 adds safe local Git helpers for clone, branch, diff, and commit operations. Optional GitHub PR creation uses the GitHub CLI and requires explicit approval in code.
+
+```bash
+brew install gh
+export GITHUB_TOKEN="your_token_here"
+```
+
+Safety rules:
+
+- Push and PR creation require `approved=True`.
+- Tokens are read from environment variables and never sent to agents.
+- Token values are redacted from command errors.
+- Branch names, refs, paths, and clone URLs are validated before commands run.
+
+## Quality Gates
+
+Run locally from `backend/`:
+
+```bash
 pytest
 ruff check .
+ruff check ../ui --config pyproject.toml
 ruff format --check .
+ruff format --check ../ui --config pyproject.toml
 mypy app
 bandit -r app
-
-# Optional if Semgrep Community Edition is installed:
-semgrep scan --config auto
 ```
 
-## Current Status
+The GitHub Actions workflow runs the same core checks on pushes and pull requests to `main`.
 
-Phase 0 scaffolding is implemented:
+## Documentation
 
-- FastAPI backend skeleton
-- `GET /health` endpoint
-- baseline pytest coverage
-- Ruff and mypy configuration
-- starter project documentation and conventions
+- [Architecture](docs/architecture.md)
+- [Agent state](docs/agent-state.md)
+- [Demo script](docs/demo-script.md)
+- [Resume bullets](docs/resume-bullets.md)
 
-Phase 1 core schemas are implemented:
+## Current Phase Status
 
-- Planner task and task-list models
-- Architecture, code-change, test-result, static-analysis, review, and agent-state models
-- Validation tests for schema behavior
-- [Agent state documentation](docs/agent-state.md)
+Completed through Phase 14:
 
-Phase 2 LLM provider abstraction is implemented:
+- Phase 0: Project scaffold and developer setup
+- Phase 1: Core schemas and shared workflow state
+- Phase 2: LLM provider abstraction with Ollama
+- Phase 3: Prompt templates and Planner/Architect agents
+- Phase 4: Repository inspection and file tools
+- Phase 5: Coder Agent with patch-based changes
+- Phase 6: Tester Agent and pytest runner
+- Phase 7: Static analysis tools
+- Phase 8: Reviewer Agent and repair loop
+- Phase 9: LangGraph workflow orchestration
+- Phase 10: FastAPI endpoints
+- Phase 11: Streamlit dashboard
+- Phase 12: Docker sandbox execution
+- Phase 13: Git and GitHub integration
+- Phase 14: CI/CD and portfolio polish
 
-- Provider-neutral request and response models
-- Abstract `LLMProvider` interface
-- Ollama client using local `/api/generate`
-- Environment-based Ollama configuration
-- Clear errors for connection failure, missing model, timeout, and malformed responses
-- Mock-provider tests that do not require Ollama
+## Limitations
 
-Phase 3 Planner and Architect agents are implemented:
+- Workflow runs are synchronous today, so long agent runs block the request.
+- Local LLM quality depends on the installed Ollama model.
+- Docker sandboxing is safer than host execution, but not a perfect security boundary.
+- GitHub PR creation requires `gh` and a configured token.
+- The dashboard is built for demos, not production multi-user operations.
 
-- Prompt templates for structured task planning and architecture design
-- Planner Agent that validates LLM output into `TaskList`
-- Architect Agent that validates LLM output into `ArchitecturePlan`
-- Shared JSON parsing and schema-validation error handling
-- Fake-provider tests that do not require a real LLM
+## Future Improvements
 
-Phase 4 repository inspection and file tools are implemented:
+- Background job queue and streaming run updates.
+- GitHub clone, branch, commit, and PR flow wired directly into the API/UI.
+- More provider implementations beyond Ollama.
+- Evaluation harness with repeatable benchmark tasks and saved example outputs.
+- Richer dashboard screenshots and a recorded demo GIF.
+- Stronger sandbox profiles for language-specific package installation.
 
-- Safe file listing, reading, and writing inside a selected repository
-- Path traversal prevention for repository file operations
-- Code search with line-level matches
-- Repository tree summaries that ignore generated and dependency directories
-- Tests for file safety and small Python repo summarization
+## License
 
-Phase 5 Coder Agent and patch tools are implemented:
-
-- Coder Agent that turns implementation context into a validated unified diff
-- Safe unified-diff parser and applicator for repository files
-- `get_diff` helper for displaying final git diffs
-- Tests for patch parsing, application, traversal rejection, and Coder Agent output validation
-
-Phase 6 Tester Agent and pytest runner are implemented:
-
-- Tester Agent that generates validated pytest test patches
-- Pytest runner with timeout support
-- Pytest result parser for pass/fail/skip counts and failed test names
-- FastAPI demo app under `examples/fastapi-demo-app`
-- Tests proving generated tests can be applied to the demo app and run successfully
-
-Phase 7 static-analysis quality gates are implemented:
-
-- Ruff lint runner and Ruff format-check runner
-- mypy type-check runner
-- Bandit security scan runner
-- Optional Semgrep Community Edition runner when installed
-- Combined quality gate runner for pytest plus static analysis
-- Graceful skipped-tool reporting when a scanner is not installed
-
-Phase 8 Reviewer Agent and repair loop are implemented:
-
-- Reviewer Agent that returns structured approval or repair feedback
-- Review issues with severity, source, optional file/line, and suggested fix
-- Manual repair loop for approval, rejection, test repair, code repair, and max-iteration stop
-- Tests with mock reviewer, repair agents, and quality gate results
-
-Phase 9 LangGraph workflow orchestration is implemented:
-
-- LangGraph `StateGraph` workflow with nodes for repo context, planner, architect, coder, tester, quality gates, reviewer, and finalize
-- Conditional routing for approval, coder repair, tester repair, rerun checks, and max-iteration finalization
-- `run_devteam_workflow` service function for local repo feature requests
-- Tests with mocked node functions covering expected sequence and routing behavior
-
-Phase 10 FastAPI run-management endpoints are implemented:
-
-- `POST /runs` starts a synchronous local workflow run
-- `GET /runs/{run_id}` returns persisted run state
-- `GET /runs/{run_id}/diff` returns the final captured diff
-- `GET /runs/{run_id}/logs` returns derived agent and quality-gate logs
-- SQLite run history with dependency-injected tests that do not require Ollama
-
-Phase 11 Streamlit dashboard is implemented:
-
-- UI inputs for local repo path, feature request, max iterations, backend URL, and existing run id
-- Run status, final summary, and agent timeline
-- Planner task list and Architect design sections
-- Diff viewer, pytest results, static-analysis results, and Reviewer feedback
-- Clear local demo instructions for running backend and UI together
-
-Phase 12 Docker sandbox execution is implemented:
-
-- Docker sandbox runner for allowlisted test and static-analysis commands
-- Resource limits for timeout, memory, CPU, PID count, and temporary writable cache space
-- Network disabled by default with an explicit configuration option
-- Safe repository mount construction and command validation
-- Sandbox Dockerfile with pytest, Ruff, mypy, Bandit, and Semgrep Community Edition
-- Tests for allowed commands, blocked dangerous commands, Docker command construction, and runner results
-
-Phase 13 Git and GitHub integration is implemented:
-
-- Git helpers for public clone, branch creation, diff inspection, and commits
-- PR title/body generation from feature summaries and changed files
-- Optional branch push and GitHub PR creation gated by explicit approval flags
-- Token-safe GitHub CLI integration with redacted error output
-- Tests using temporary Git repositories and mocked GitHub CLI calls
+MIT. See [LICENSE](LICENSE).

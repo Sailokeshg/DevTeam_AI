@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500" role="img" aria-labelledby="title desc">
+  <title id="title">DevTeam AI demo GIF placeholder</title>
+  <desc id="desc">Placeholder for a future animated demo GIF.</desc>
+  <rect width="1200" height="500" fill="#18211f"/>
+  <path d="M0 380 C220 270 330 440 520 315 C720 185 860 260 1200 120 L1200 500 L0 500 Z" fill="#2f604f" opacity="0.65"/>
+  <path d="M0 430 C260 340 420 470 660 335 C870 215 1010 270 1200 190 L1200 500 L0 500 Z" fill="#c96f4a" opacity="0.55"/>
+  <circle cx="600" cy="205" r="78" fill="#fffdf6" opacity="0.95"/>
+  <polygon points="575,165 575,245 645,205" fill="#18211f"/>
+  <text x="600" y="345" text-anchor="middle" font-family="Georgia, serif" font-size="54" fill="#fffdf6">Demo GIF Placeholder</text>
+  <text x="600" y="390" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#f5efe2">Record the full request to reviewed patch workflow in Phase 15.</text>
+</svg>
