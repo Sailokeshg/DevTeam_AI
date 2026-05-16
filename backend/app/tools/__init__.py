@@ -1,5 +1,14 @@
 """Tooling modules for repository and quality operations."""
 
+from app.tools.docker_runner import (
+    DockerCommandResult,
+    DockerCommandValidationError,
+    DockerRunnerError,
+    DockerSandboxConfig,
+    build_docker_command,
+    run_sandboxed_command,
+    validate_sandbox_command,
+)
 from app.tools.file_tools import (
     FileEntry,
     FileReadResult,
@@ -40,6 +49,10 @@ from app.tools.static_analysis import (
 from app.tools.test_runner import TestRunnerError, parse_pytest_output, run_pytest
 
 __all__ = [
+    "DockerCommandResult",
+    "DockerCommandValidationError",
+    "DockerRunnerError",
+    "DockerSandboxConfig",
     "FileEntry",
     "FileReadResult",
     "FileToolError",
@@ -55,6 +68,7 @@ __all__ = [
     "StaticAnalysisRunnerError",
     "TestRunnerError",
     "apply_unified_diff",
+    "build_docker_command",
     "get_diff",
     "list_files",
     "parse_pytest_output",
@@ -68,10 +82,12 @@ __all__ = [
     "run_pytest",
     "run_ruff_check",
     "run_ruff_format_check",
+    "run_sandboxed_command",
     "run_semgrep",
     "run_static_analysis_command",
     "search_code",
     "summarize_repository_tree",
+    "validate_sandbox_command",
     "validate_unified_diff",
     "write_file",
 ]

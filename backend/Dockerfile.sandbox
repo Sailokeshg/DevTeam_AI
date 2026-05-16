@@ -1,0 +1,24 @@
+FROM python:3.11-slim
+
+ENV PIP_NO_CACHE_DIR=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    RUFF_CACHE_DIR=/tmp/ruff-cache \
+    MYPY_CACHE_DIR=/tmp/mypy-cache
+
+RUN python -m pip install --upgrade pip \
+    && python -m pip install \
+        pytest \
+        ruff \
+        mypy \
+        bandit \
+        semgrep \
+    && addgroup --system sandbox \
+    && adduser --system --ingroup sandbox --home /home/sandbox sandbox \
+    && mkdir -p /workspace /tmp/ruff-cache /tmp/mypy-cache \
+    && chown -R sandbox:sandbox /home/sandbox /workspace /tmp/ruff-cache /tmp/mypy-cache
+
+USER sandbox
+WORKDIR /workspace
+
+CMD ["pytest", "-q"]

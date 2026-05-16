@@ -119,6 +119,50 @@ It can start a new synchronous run or load an existing run id, then display the 
 planner tasks, architecture plan, code diff, pytest results, static-analysis results, reviewer
 feedback, and final summary.
 
+## Docker Sandbox (Phase 12)
+
+Phase 12 adds a constrained Docker runner for test and quality-gate commands. Build the
+sandbox image from the repository root:
+
+```bash
+docker build -f backend/Dockerfile.sandbox -t devteam-ai-sandbox:latest backend
+```
+
+The runner allows only these executables inside the sandbox:
+
+- `pytest`
+- `ruff`
+- `mypy`
+- `bandit`
+- `semgrep`
+
+Sandbox defaults:
+
+- mounts only the selected repository at `/workspace`
+- disables network access by default
+- applies memory, CPU, and PID limits
+- drops Linux capabilities and enables `no-new-privileges`
+- runs with a read-only container filesystem and temporary writable cache directories
+- rejects shell control operators, absolute paths, and path traversal outside `/workspace`
+
+Example internal use:
+
+```python
+from app.tools.docker_runner import run_sandboxed_command
+
+result = run_sandboxed_command("/absolute/path/to/repo", ["pytest", "-q"])
+print(result.success, result.output)
+```
+
+Sandbox limitations:
+
+- Docker must be installed and running locally.
+- The selected repository is mounted into the container; use `repository_read_only=True` for
+  read-only checks when possible.
+- This is a safer execution boundary, not a perfect security boundary for malicious code.
+- Network is disabled by default, so commands that need downloads should fail unless explicitly
+  configured otherwise.
+
 ## Ollama Setup (Phase 2)
 
 DevTeam AI uses Ollama as the default local/free LLM provider.
@@ -263,3 +307,12 @@ Phase 11 Streamlit dashboard is implemented:
 - Planner task list and Architect design sections
 - Diff viewer, pytest results, static-analysis results, and Reviewer feedback
 - Clear local demo instructions for running backend and UI together
+
+Phase 12 Docker sandbox execution is implemented:
+
+- Docker sandbox runner for allowlisted test and static-analysis commands
+- Resource limits for timeout, memory, CPU, PID count, and temporary writable cache space
+- Network disabled by default with an explicit configuration option
+- Safe repository mount construction and command validation
+- Sandbox Dockerfile with pytest, Ruff, mypy, Bandit, and Semgrep Community Edition
+- Tests for allowed commands, blocked dangerous commands, Docker command construction, and runner results
