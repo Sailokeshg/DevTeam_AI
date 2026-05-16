@@ -135,3 +135,11 @@ Phase 2 LLM provider abstraction is implemented:
 - Environment-based Ollama configuration
 - Clear errors for connection failure, missing model, timeout, and malformed responses
 - Mock-provider tests that do not require Ollama
+
+Phase 3 Planner and Architect agents are implemented:
+
+- Prompt templates for structured task planning and architecture design
+- Planner Agent that validates LLM output into `TaskList`
+- Architect Agent that validates LLM output into `ArchitecturePlan`
+- Shared JSON parsing and schema-validation error handling
+- Fake-provider tests that do not require a real LLM
