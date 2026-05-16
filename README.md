@@ -31,7 +31,7 @@ The project is split into:
 14. CI/CD and portfolio polish
 15. Evaluation and example runs
 
-## Local Setup (Phase 0)
+## Local Setup
 
 ### 1. Create and activate a virtual environment
 
@@ -65,7 +65,40 @@ Expected response:
 {"status": "ok"}
 ```
 
-## Quality Checks (Phase 0)
+## Ollama Setup (Phase 2)
+
+DevTeam AI uses Ollama as the default local/free LLM provider.
+
+Install Ollama from [ollama.com](https://ollama.com), then start the local server:
+
+```bash
+ollama serve
+```
+
+Pull the default model:
+
+```bash
+ollama pull llama3.1
+```
+
+Optional environment variables:
+
+```bash
+export OLLAMA_BASE_URL="http://127.0.0.1:11434"
+export OLLAMA_MODEL="llama3.1"
+export OLLAMA_TIMEOUT_SECONDS="30"
+```
+
+Internal provider smoke test:
+
+```bash
+cd backend
+python -c "from app.llm import generate_text; print(generate_text('Reply with ok.').text)"
+```
+
+Tests use a mock provider and do not require Ollama to be installed or running.
+
+## Quality Checks
 
 From the `backend/` directory:
 
@@ -73,6 +106,7 @@ From the `backend/` directory:
 cd backend
 pytest
 ruff check .
+ruff format --check .
 mypy app
 ```
 
@@ -92,3 +126,12 @@ Phase 1 core schemas are implemented:
 - Architecture, code-change, test-result, static-analysis, review, and agent-state models
 - Validation tests for schema behavior
 - [Agent state documentation](docs/agent-state.md)
+
+Phase 2 LLM provider abstraction is implemented:
+
+- Provider-neutral request and response models
+- Abstract `LLMProvider` interface
+- Ollama client using local `/api/generate`
+- Environment-based Ollama configuration
+- Clear errors for connection failure, missing model, timeout, and malformed responses
+- Mock-provider tests that do not require Ollama
