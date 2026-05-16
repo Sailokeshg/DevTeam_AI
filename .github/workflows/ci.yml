@@ -37,6 +37,10 @@ jobs:
         working-directory: backend
         run: ruff check ../ui --config pyproject.toml
 
+      - name: Ruff lint scripts and examples
+        working-directory: backend
+        run: ruff check ../scripts ../examples --config pyproject.toml
+
       - name: Ruff format check backend
         working-directory: backend
         run: ruff format --check .
@@ -45,6 +49,10 @@ jobs:
         working-directory: backend
         run: ruff format --check ../ui --config pyproject.toml
 
+      - name: Ruff format check scripts and examples
+        working-directory: backend
+        run: ruff format --check ../scripts ../examples --config pyproject.toml
+
       - name: mypy
         working-directory: backend
         run: mypy app
@@ -52,6 +60,10 @@ jobs:
       - name: pytest
         working-directory: backend
         run: pytest
+
+      - name: Evaluate demo tasks
+        working-directory: backend
+        run: python ../scripts/evaluate_demo_tasks.py --output-dir /tmp/devteam-example-runs
 
       - name: Bandit security scan
         working-directory: backend

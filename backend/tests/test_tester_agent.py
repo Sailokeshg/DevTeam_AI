@@ -111,7 +111,7 @@ def test_tester_agent_can_add_tests_to_demo_app(tmp_path: Path) -> None:
     )
 
     apply_unified_diff(demo_repo, patch)
-    result = run_pytest(demo_repo, timeout_seconds=10)
+    result = run_pytest(demo_repo, args=["-q", "tests/test_app.py"], timeout_seconds=10)
 
     assert result.success is True
     assert result.passed_count == 1

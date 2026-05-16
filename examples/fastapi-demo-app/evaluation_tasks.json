@@ -1,0 +1,44 @@
+[
+  {
+    "id": "add-health-endpoint",
+    "title": "Add health endpoint",
+    "feature_request": "Add a GET /health endpoint that returns {\"status\": \"ok\"} and include pytest coverage.",
+    "pytest_targets": ["tests/test_main.py::test_health_endpoint_returns_ok"],
+    "expected_files_changed": ["app/main.py", "tests/test_main.py"],
+    "recorded_iterations": 1,
+    "expected_quality_gate_status": "passed"
+  },
+  {
+    "id": "add-input-validation",
+    "title": "Add input validation",
+    "feature_request": "Add input validation for creating items so invalid names and quantities return 422 responses.",
+    "pytest_targets": [
+      "tests/test_main.py::test_create_item_accepts_valid_payload",
+      "tests/test_main.py::test_create_item_rejects_invalid_payload"
+    ],
+    "expected_files_changed": ["app/main.py", "tests/test_main.py"],
+    "recorded_iterations": 2,
+    "expected_quality_gate_status": "passed"
+  },
+  {
+    "id": "add-jwt-auth-skeleton",
+    "title": "Add JWT auth skeleton",
+    "feature_request": "Add a JWT-shaped bearer-token auth skeleton with a protected /auth/me endpoint and tests for accepted and missing tokens.",
+    "pytest_targets": [
+      "tests/test_main.py::test_jwt_auth_skeleton_accepts_bearer_token",
+      "tests/test_main.py::test_jwt_auth_skeleton_rejects_missing_token"
+    ],
+    "expected_files_changed": ["app/main.py", "tests/test_main.py"],
+    "recorded_iterations": 2,
+    "expected_quality_gate_status": "passed"
+  },
+  {
+    "id": "fix-failing-test",
+    "title": "Fix failing test",
+    "feature_request": "Fix the failing ping endpoint test so GET /ping returns {\"message\": \"pong\"}.",
+    "pytest_targets": ["tests/test_main.py::test_ping_returns_pong"],
+    "expected_files_changed": ["app/main.py", "tests/test_main.py"],
+    "recorded_iterations": 1,
+    "expected_quality_gate_status": "passed"
+  }
+]

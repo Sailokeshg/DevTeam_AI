@@ -1,0 +1,26 @@
+{
+  "feature_request": "Add a JWT-shaped bearer-token auth skeleton with a protected /auth/me endpoint and tests for accepted and missing tokens.",
+  "files_changed": [
+    "app/main.py",
+    "tests/test_main.py"
+  ],
+  "iterations": 2,
+  "notes": "Deterministic Phase 15 demo evaluation. Iterations and files_changed are recorded curated-run metadata; tests and quality gates are executed live.",
+  "pytest_targets": [
+    "tests/test_main.py::test_jwt_auth_skeleton_accepts_bearer_token",
+    "tests/test_main.py::test_jwt_auth_skeleton_rejects_missing_token"
+  ],
+  "quality_gate_status": "passed",
+  "quality_gates": {
+    "bandit": "passed",
+    "mypy": "passed",
+    "pytest": "passed",
+    "ruff": "passed",
+    "ruff-format": "passed"
+  },
+  "status": "passed",
+  "task_id": "add-jwt-auth-skeleton",
+  "tests_failed": 0,
+  "tests_passed": 2,
+  "title": "Add JWT auth skeleton"
+}

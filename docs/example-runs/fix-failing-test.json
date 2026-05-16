@@ -1,0 +1,25 @@
+{
+  "feature_request": "Fix the failing ping endpoint test so GET /ping returns {\"message\": \"pong\"}.",
+  "files_changed": [
+    "app/main.py",
+    "tests/test_main.py"
+  ],
+  "iterations": 1,
+  "notes": "Deterministic Phase 15 demo evaluation. Iterations and files_changed are recorded curated-run metadata; tests and quality gates are executed live.",
+  "pytest_targets": [
+    "tests/test_main.py::test_ping_returns_pong"
+  ],
+  "quality_gate_status": "passed",
+  "quality_gates": {
+    "bandit": "passed",
+    "mypy": "passed",
+    "pytest": "passed",
+    "ruff": "passed",
+    "ruff-format": "passed"
+  },
+  "status": "passed",
+  "task_id": "fix-failing-test",
+  "tests_failed": 0,
+  "tests_passed": 1,
+  "title": "Fix failing test"
+}

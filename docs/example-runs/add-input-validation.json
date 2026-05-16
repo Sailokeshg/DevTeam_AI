@@ -1,0 +1,26 @@
+{
+  "feature_request": "Add input validation for creating items so invalid names and quantities return 422 responses.",
+  "files_changed": [
+    "app/main.py",
+    "tests/test_main.py"
+  ],
+  "iterations": 2,
+  "notes": "Deterministic Phase 15 demo evaluation. Iterations and files_changed are recorded curated-run metadata; tests and quality gates are executed live.",
+  "pytest_targets": [
+    "tests/test_main.py::test_create_item_accepts_valid_payload",
+    "tests/test_main.py::test_create_item_rejects_invalid_payload"
+  ],
+  "quality_gate_status": "passed",
+  "quality_gates": {
+    "bandit": "passed",
+    "mypy": "passed",
+    "pytest": "passed",
+    "ruff": "passed",
+    "ruff-format": "passed"
+  },
+  "status": "passed",
+  "task_id": "add-input-validation",
+  "tests_failed": 0,
+  "tests_passed": 2,
+  "title": "Add input validation"
+}

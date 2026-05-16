@@ -1,0 +1,25 @@
+{
+  "feature_request": "Add a GET /health endpoint that returns {\"status\": \"ok\"} and include pytest coverage.",
+  "files_changed": [
+    "app/main.py",
+    "tests/test_main.py"
+  ],
+  "iterations": 1,
+  "notes": "Deterministic Phase 15 demo evaluation. Iterations and files_changed are recorded curated-run metadata; tests and quality gates are executed live.",
+  "pytest_targets": [
+    "tests/test_main.py::test_health_endpoint_returns_ok"
+  ],
+  "quality_gate_status": "passed",
+  "quality_gates": {
+    "bandit": "passed",
+    "mypy": "passed",
+    "pytest": "passed",
+    "ruff": "passed",
+    "ruff-format": "passed"
+  },
+  "status": "passed",
+  "task_id": "add-health-endpoint",
+  "tests_failed": 0,
+  "tests_passed": 1,
+  "title": "Add health endpoint"
+}

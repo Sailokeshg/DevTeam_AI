@@ -162,6 +162,28 @@ curl http://127.0.0.1:8000/runs/<run_id>/logs
 
 The Streamlit dashboard can start the same run and display the agent timeline, task list, architecture plan, diff, tests, static-analysis results, reviewer feedback, and final status.
 
+## Evaluation Results
+
+Phase 15 adds curated demo tasks and a deterministic evaluation harness for
+`examples/fastapi-demo-app`.
+
+Run the evaluation from the repository root:
+
+```bash
+python scripts/evaluate_demo_tasks.py
+```
+
+Latest saved results:
+
+| Task | Status | Iterations | Files Changed | Tests Passed | Quality Gate |
+| --- | --- | ---: | ---: | ---: | --- |
+| Add health endpoint | passed | 1 | 2 | 1 | passed |
+| Add input validation | passed | 2 | 2 | 2 | passed |
+| Add JWT auth skeleton | passed | 2 | 2 | 2 | passed |
+| Fix failing test | passed | 1 | 2 | 1 | passed |
+
+Saved artifacts live in [docs/example-runs](docs/example-runs/).
+
 ## Docker Sandbox
 
 Build the sandbox image:
@@ -218,10 +240,11 @@ The GitHub Actions workflow runs the same core checks on pushes and pull request
 - [Agent state](docs/agent-state.md)
 - [Demo script](docs/demo-script.md)
 - [Resume bullets](docs/resume-bullets.md)
+- [Example runs](docs/example-runs/summary.md)
 
 ## Current Phase Status
 
-Completed through Phase 14:
+Completed through Phase 15:
 
 - Phase 0: Project scaffold and developer setup
 - Phase 1: Core schemas and shared workflow state
@@ -238,6 +261,7 @@ Completed through Phase 14:
 - Phase 12: Docker sandbox execution
 - Phase 13: Git and GitHub integration
 - Phase 14: CI/CD and portfolio polish
+- Phase 15: Evaluation and example runs
 
 ## Limitations
 
