@@ -108,6 +108,10 @@ pytest
 ruff check .
 ruff format --check .
 mypy app
+bandit -r app
+
+# Optional if Semgrep Community Edition is installed:
+semgrep scan --config auto
 ```
 
 ## Current Status
@@ -159,10 +163,33 @@ Phase 5 Coder Agent and patch tools are implemented:
 - `get_diff` helper for displaying final git diffs
 - Tests for patch parsing, application, traversal rejection, and Coder Agent output validation
 
-Phase 4 repository inspection and file tools are implemented:
+Phase 6 Tester Agent and pytest runner are implemented:
 
-- Safe path resolution that prevents access outside the selected repository
-- File listing, reading, writing, and code search helpers
-- Repository tree summaries with basic file-extension statistics
-- Common generated and dependency directories ignored during inspection
-- Tests for path safety, ignored folders, search, and summarization
+- Tester Agent that generates validated pytest test patches
+- Pytest runner with timeout support
+- Pytest result parser for pass/fail/skip counts and failed test names
+- FastAPI demo app under `examples/fastapi-demo-app`
+- Tests proving generated tests can be applied to the demo app and run successfully
+
+Phase 7 static-analysis quality gates are implemented:
+
+- Ruff lint runner and Ruff format-check runner
+- mypy type-check runner
+- Bandit security scan runner
+- Optional Semgrep Community Edition runner when installed
+- Combined quality gate runner for pytest plus static analysis
+- Graceful skipped-tool reporting when a scanner is not installed
+
+Phase 8 Reviewer Agent and repair loop are implemented:
+
+- Reviewer Agent that returns structured approval or repair feedback
+- Review issues with severity, source, optional file/line, and suggested fix
+- Manual repair loop for approval, rejection, test repair, code repair, and max-iteration stop
+- Tests with mock reviewer, repair agents, and quality gate results
+
+Phase 9 LangGraph workflow orchestration is implemented:
+
+- LangGraph `StateGraph` workflow with nodes for repo context, planner, architect, coder, tester, quality gates, reviewer, and finalize
+- Conditional routing for approval, coder repair, tester repair, rerun checks, and max-iteration finalization
+- `run_devteam_workflow` service function for local repo feature requests
+- Tests with mocked node functions covering expected sequence and routing behavior
